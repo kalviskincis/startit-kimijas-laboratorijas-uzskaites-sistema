@@ -10,8 +10,9 @@ async function raditNoliktavasDatus(tipsAtlase)
     jsonVielas = await vielasNoServera.json();
     jsonVielas = pievienotIerakstuParKategoriju(jsonVielas, 'viela');
     //
-    let inventarsNoServera = await fetch('/api/v1/inventars');
+    let inventarsNoServera = await fetch('/api/v2/inventars');
     jsonInventars = await inventarsNoServera.json();
+    console.log('!!!',jsonInventars);
     jsonInventars = pievienotIerakstuParKategoriju(jsonInventars, 'inventars');
   }
   else if(tipsAtlase=='viela')
@@ -24,7 +25,7 @@ async function raditNoliktavasDatus(tipsAtlase)
   else if(tipsAtlase=='aprikojums')
   {
     //jsonInventars = await iegutDatusNoApi('/api/v1/inventars');
-    let inventarsNoServera = await fetch('/api/v1/inventars');
+    let inventarsNoServera = await fetch('/api/v2/inventars');
     jsonInventars = await inventarsNoServera.json();
     jsonInventars = pievienotIerakstuParKategoriju(jsonInventars, 'inventars');
   }

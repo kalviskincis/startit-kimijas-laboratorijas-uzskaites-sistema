@@ -1,8 +1,10 @@
 from flask import Flask, json, jsonify, render_template, request
 import dati
+import sqlite3
 
 
 app = Flask(__name__)
+
 
 # nepieciešams garum- un mīkstinājumzīmēm json formātā
 app.config['JSON_AS_ASCII'] = False
@@ -44,7 +46,7 @@ def vielas():
     with open("dati/vielas.json", "r") as f:
         # ielasām un pārvēršam par json
         dati = json.loads(f.read())
-    
+
     # pārveidojam par string pirms atgriežam
     return jsonify(dati)
 
@@ -55,16 +57,54 @@ def inventars():
     with open("dati/inventars.json", "r") as f:
         # ielasām un pārvēršam par json
         dati = json.loads(f.read())
-    
+
     # pārveidojam par string pirms atgriežam
     return jsonify(dati)
 
+
+@app.route('/api/v2/inventars', methods=['GET'])
+def v2inventars():
+      try:
+          with sqlite3.connect('Dati.db') as conn:
+              # conn = sqlite3.connect('Dati.db') # vairs nevajag, jo ir iepriekšējā rinda
+              c = conn.cursor()
+              # c.execute("SELECT * FROM Users")
+              c.execute("SELECT ID, NOSAUKUMS, TIPS, APAKSTIPS, '' AS DAUDZUMS, SKAITS, KOMENTARI FROM Inventars")
+              data = c.fetchall()              
+              # print(c.fetchall())
+              
+              #jsonData = ''
+              jsonData = []
+              
+              column_names = ['id', 'nosaukums', 'tips', 'apakstips', 'daudzums', 'skaits', 'komentari']              
+              for row in data:
+                  info = dict(zip(column_names, row))                  
+                  #jsonData = jsonData + json.dumps(info) + ','
+                  jsonData.append(info)
+
+              #jsonData = jsonData[:-1]
+              #jsonData = '[' + jsonData + ']'
+              #print(jsonData)
+              #rint(type(jsonData))
+              msg = "Izdevās"
+              print(msg)
+      except:
+          conn.rollback()
+          msg = "Ir kļūda"
+
+      finally:
+          conn.commit()
+          c.close()
+          conn.close()          
+          return jsonify(jsonData)
+          #return jsonData
+# select * from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='tableName' 
 
 @app.route('/api/v1/viela/<vielasID>', methods=['GET'])
 def viela_id(vielasID):
     # Noklusēta vērtība, ja viela netiks atrasta
     viela = "Viela ar ID {} neeksistē".format(vielasID)
-    
+
     # atveram datni
     with open("dati/vielas.json", "r") as f:
         # ielasām un pārvēršam par json
@@ -78,13 +118,13 @@ def viela_id(vielasID):
     return jsonify(viela)
 
 
-@app.route('/api/v1/viela',methods=['POST'])
+@app.route('/api/v1/viela', methods=['POST'])
 def jauna_viela():
     # atveram datni, lai ielasītu esošos datus
     with open("dati/vielas.json", "r", encoding='utf-8') as f:
         # ielasām un pārvēršam par json
         dati = json.loads(f.read())
-    
+
     # atrodam lielāko vielas ID
     lielais_id = 1
     for viela in dati:
@@ -98,7 +138,7 @@ def jauna_viela():
         return jsonify("Aizpildiet visus laukus!")
     if len(jauna_viela["nosaukums"]) < 3:
         return jsonify("Vielas nosaukums ir par īsu!")
-    
+
     # ja viss ir OK, pievienojam jauno id
     jauna_viela["id"] = lielais_id + 1
     # pievienojam jauno vielu pie datiem
