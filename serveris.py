@@ -67,17 +67,24 @@ def v2vielas():
             for row in data:
                 info = dict(zip(column_names, row))
                 jsonData.append(info)
-            msg = "Izdevās V"   
+            msg = "Vielu dati iegūti veiksmīgi. "   
             print(msg)
-            jsonData.append(msg)
+            
+            vieArMsg = {}
+            vieArMsg['dati'] = jsonData
+            vieArMsg['status'] = msg
     except:          
         conn.rollback()
-        msg = "Ir kļūda I"
+        msg = "Ir kļūda, iegūstot vielu datus. "
+        vieArMsg = {}
+        vieArMsg['dati'] = ''          
+        vieArMsg['status'] = msg
+
     finally:
         conn.commit()
         c.close()
         conn.close()          
-        return jsonify(jsonData)    
+        return jsonify(vieArMsg)  
     
 
 
@@ -117,18 +124,26 @@ def v2inventars():
               # jsonData = '[' + jsonData + ']'
               # print(jsonData)
               # rint(type(jsonData))
-              msg = "Izdevās I"
+
+              msg = "Inventāra dati iegūti veiksmīgi. "
               print(msg)
-              jsonData.append(msg)
+              invArMsg = {}
+              invArMsg['dati'] = jsonData
+              invArMsg['status'] = msg
+              
       except:
           conn.rollback()
-          msg = "Ir kļūda I"
+          msg = "Ir kļūda, iegūstot inventāra datus. "
+          invArMsg = {}
+          invArMsg['dati'] = ''          
+          invArMsg['status'] = msg
 
       finally:
           conn.commit()
           c.close()
           conn.close()          
-          return jsonify(jsonData)
+          # return jsonify(jsonData)
+          return jsonify(invArMsg)
           # return jsonData
 # select * from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='tableName' 
 

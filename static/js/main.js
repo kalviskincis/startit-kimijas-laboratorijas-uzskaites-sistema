@@ -1,39 +1,36 @@
 async function raditNoliktavasDatus(tipsAtlase)
 {
- 
+  let srvStatuss = ''
   let jsonVielas = Array();
   let jsonInventars = Array();
 
   if(tipsAtlase==undefined)
   {
     let vielasNoServera = await fetch('/api/v2/vielas');
-    jsonVielas = await vielasNoServera.json();
-    
-    let msg1 = jsonVielas[jsonVielas.length-1];
-    jsonVielas.pop();
+    jsonVielas = await vielasNoServera.json();    
+    let msg1 = jsonVielas.status;
+    srvStatuss += msg1;
+    jsonVielas = jsonVielas.dati;    
     console.log(msg1);
-
     jsonVielas = pievienotIerakstuParKategoriju(jsonVielas, 'viela');
     
     let inventarsNoServera = await fetch('/api/v2/inventars');
-    jsonInventars = await inventarsNoServera.json();
-
-    let msg = jsonInventars[jsonInventars.length-1];
-    jsonInventars.pop();
+    jsonInventars = await inventarsNoServera.json();    
+    let msg = jsonInventars.status;
+    srvStatuss += msg;
+    jsonInventars = jsonInventars.dati;
     console.log(msg);
-
     jsonInventars = pievienotIerakstuParKategoriju(jsonInventars, 'inventars');
   }
   else if(tipsAtlase=='viela')
   {
     //jsonVielas = await iegutDatusNoApi('/api/v1/vielas');
     let vielasNoServera = await fetch('/api/v2/vielas');
-    jsonVielas = await vielasNoServera.json();
-
-    let msg1 = jsonVielas[jsonVielas.length-1];
-    jsonVielas.pop();
+    jsonVielas = await vielasNoServera.json(); 
+    let msg1 = jsonVielas.status;
+    srvStatuss += msg1;
+    jsonVielas = jsonVielas.dati;    
     console.log(msg1);
-
     jsonVielas = pievienotIerakstuParKategoriju(jsonVielas, 'viela');
   }
   else if(tipsAtlase=='aprikojums')
@@ -42,12 +39,15 @@ async function raditNoliktavasDatus(tipsAtlase)
     let inventarsNoServera = await fetch('/api/v2/inventars');
     jsonInventars = await inventarsNoServera.json();
 
-    let msg = jsonInventars[jsonInventars.length-1];
-    jsonInventars.pop();
+    let msg = jsonInventars.status;
+    srvStatuss += msg;
+    jsonInventars = jsonInventars.dati;
     console.log(msg);
     
     jsonInventars = pievienotIerakstuParKategoriju(jsonInventars, 'inventars');
   }
+
+  document.getElementById('serveraAtbilde').innerHTML = srvStatuss;
 
 
   let datiNoliktava = jsonVielas.concat(jsonInventars);
