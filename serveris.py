@@ -51,6 +51,37 @@ def vielas():
     return jsonify(dati)
 
 
+@app.route('/api/v2/vielas', methods=['GET'])
+def v2vielas():
+    try:
+        with sqlite3.connect('Dati.db') as conn:
+            # conn = sqlite3.connect('Dati.db') # vairs nevajag, jo ir iepriekšējā rinda
+            c = conn.cursor()
+            # c.execute("SELECT * FROM Users")
+            c.execute(
+                "SELECT ID, NOSAUKUMS, TIPS, APAKSTIPS, SKAITS, KOMENTARI, DAUDZUMS, MERVIENIBAS FROM Vielas")
+            data = c.fetchall()
+            # print(data)
+            jsonData = []
+            column_names = ['id', 'nosaukums', 'tips', 'apakstips', 'skaits', 'komentari','daudzums', 'mervienibas']
+            for row in data:
+                info = dict(zip(column_names, row))
+                jsonData.append(info)
+            msg = "Izdevās V"   
+            print(msg)
+            jsonData.append(msg)
+    except:          
+        conn.rollback()
+        msg = "Ir kļūda I"
+    finally:
+        conn.commit()
+        c.close()
+        conn.close()          
+        return jsonify(jsonData)    
+    
+
+
+
 @app.route('/api/v1/inventars', methods=['GET'])
 def inventars():
     # atveram datni
@@ -69,35 +100,36 @@ def v2inventars():
               # conn = sqlite3.connect('Dati.db') # vairs nevajag, jo ir iepriekšējā rinda
               c = conn.cursor()
               # c.execute("SELECT * FROM Users")
-              c.execute("SELECT ID, NOSAUKUMS, TIPS, APAKSTIPS, '' AS DAUDZUMS, SKAITS, KOMENTARI FROM Inventars")
+              c.execute("SELECT ID, NOSAUKUMS, TIPS, APAKSTIPS, '' AS DAUDZUMS, '' AS MERVIENIBAS, SKAITS, KOMENTARI FROM Inventars")
               data = c.fetchall()              
               # print(c.fetchall())
               
-              #jsonData = ''
+              # jsonData = ''
               jsonData = []
               
-              column_names = ['id', 'nosaukums', 'tips', 'apakstips', 'daudzums', 'skaits', 'komentari']              
+              column_names = ['id', 'nosaukums', 'tips', 'apakstips', 'daudzums', 'mervienibas', 'skaits', 'komentari']              
               for row in data:
                   info = dict(zip(column_names, row))                  
-                  #jsonData = jsonData + json.dumps(info) + ','
+                  # jsonData = jsonData + json.dumps(info) + ','
                   jsonData.append(info)
 
-              #jsonData = jsonData[:-1]
-              #jsonData = '[' + jsonData + ']'
-              #print(jsonData)
-              #rint(type(jsonData))
-              msg = "Izdevās"
+              # jsonData = jsonData[:-1]
+              # jsonData = '[' + jsonData + ']'
+              # print(jsonData)
+              # rint(type(jsonData))
+              msg = "Izdevās I"
               print(msg)
+              jsonData.append(msg)
       except:
           conn.rollback()
-          msg = "Ir kļūda"
+          msg = "Ir kļūda I"
 
       finally:
           conn.commit()
           c.close()
           conn.close()          
           return jsonify(jsonData)
-          #return jsonData
+          # return jsonData
 # select * from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='tableName' 
 
 @app.route('/api/v1/viela/<vielasID>', methods=['GET'])

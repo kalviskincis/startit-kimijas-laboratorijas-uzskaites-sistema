@@ -6,20 +6,34 @@ async function raditNoliktavasDatus(tipsAtlase)
 
   if(tipsAtlase==undefined)
   {
-    let vielasNoServera = await fetch('/api/v1/vielas');
+    let vielasNoServera = await fetch('/api/v2/vielas');
     jsonVielas = await vielasNoServera.json();
+    
+    let msg1 = jsonVielas[jsonVielas.length-1];
+    jsonVielas.pop();
+    console.log(msg1);
+
     jsonVielas = pievienotIerakstuParKategoriju(jsonVielas, 'viela');
-    //
+    
     let inventarsNoServera = await fetch('/api/v2/inventars');
     jsonInventars = await inventarsNoServera.json();
-    console.log('!!!',jsonInventars);
+
+    let msg = jsonInventars[jsonInventars.length-1];
+    jsonInventars.pop();
+    console.log(msg);
+
     jsonInventars = pievienotIerakstuParKategoriju(jsonInventars, 'inventars');
   }
   else if(tipsAtlase=='viela')
   {
     //jsonVielas = await iegutDatusNoApi('/api/v1/vielas');
-    let vielasNoServera = await fetch('/api/v1/vielas');
+    let vielasNoServera = await fetch('/api/v2/vielas');
     jsonVielas = await vielasNoServera.json();
+
+    let msg1 = jsonVielas[jsonVielas.length-1];
+    jsonVielas.pop();
+    console.log(msg1);
+
     jsonVielas = pievienotIerakstuParKategoriju(jsonVielas, 'viela');
   }
   else if(tipsAtlase=='aprikojums')
@@ -27,6 +41,11 @@ async function raditNoliktavasDatus(tipsAtlase)
     //jsonInventars = await iegutDatusNoApi('/api/v1/inventars');
     let inventarsNoServera = await fetch('/api/v2/inventars');
     jsonInventars = await inventarsNoServera.json();
+
+    let msg = jsonInventars[jsonInventars.length-1];
+    jsonInventars.pop();
+    console.log(msg);
+    
     jsonInventars = pievienotIerakstuParKategoriju(jsonInventars, 'inventars');
   }
 
@@ -54,7 +73,7 @@ async function raditNoliktavasDatus(tipsAtlase)
       <td> `+datiNoliktava[i]['tips']+` </td>
       <td> `+datiNoliktava[i]['apakstips']+` </td>
       <td> `+datiNoliktava[i]['skaits']+` </td>
-      <td> `+datiNoliktava[i]['daudzums']+` </td>
+      <td> `+datiNoliktava[i]['daudzums']+ ' ' +datiNoliktava[i]['mervienibas']+` </td>      
       <td> `+datiNoliktava[i]['komentari']+` </td>
       <td onclick="dzestVieluAprikojumu(`+datiNoliktava[i]['id']+`,'`+kategorija+`')"> ❌ </td>
       </tr>`;
